@@ -1,29 +1,28 @@
 const path = require('path');
 const fs = require('fs');
+const {mergeStyles} = require('../05-merge-styles/index');
+const {copyDirectory} = require('../04-copy-directory/index');
 const { copyFile } = require('fs/promises');
 
 const newDirPath = path.join(__dirname, 'project-dist');
-
-
-
 
 function callback(err) {
     if (err) throw err;
 }
 
-function copyStyleFiles(){
-    const filePathStyle = path.join(__dirname, 'styles');
-    const bundlePathStyle = path.join(__dirname,'project-dist/style.css');
-    let styleArray=[];
-    fs.writeFile(bundlePathStyle,'',callback)
-    fs.readdir(filePathStyle,{withFileTypes: true}, async function(err, content)
-    {
-        callback;
-        styleArray = await copyToArray(content, filePathStyle);
-        writeToFile(styleArray, bundlePathStyle);
-    })
+// function copyStyleFiles(){
+//     const filePathStyle = path.join(__dirname, 'styles');
+//     const bundlePathStyle = path.join(__dirname,'project-dist/style.css');
+//     let styleArray=[];
+//     fs.writeFile(bundlePathStyle,'',callback)
+//     fs.readdir(filePathStyle,{withFileTypes: true}, async function(err, content)
+//     {
+//         callback;
+//         styleArray = await copyToArray(content, filePathStyle);
+//         writeToFile(styleArray, bundlePathStyle);
+//     })
     
-}
+// }
 
 function writeToFile(array, newFilePath){
     for(let i=0;i<array.length;i++){
@@ -31,47 +30,17 @@ function writeToFile(array, newFilePath){
     }  
 }
 
-async function copyToArray(directory, filePath){
-    let array=[];
-    for(let file of directory){
-        
-        if(file.isFile() && path.extname(file.name)=='.css')
-        { 
-            let newData = await readContent(file.name,filePath);
-            array.push(newData);
-        }
-    }
-    return array;
-}
 async function readContent(file, filePath){
     const data = await fs.promises.readFile(path.join(filePath, file),'utf8');
     return data;
 }
-
-function copyFiles(initD, newD){
-    fs.readdir(initD,{withFileTypes: true}, (err, content)=>  
-    {
-        if(err)
-        {
-            return console.log(err);
-        }
-        for(let file of content){
-            if(file.isFile())
-            {
-                fs.copyFile(path.join(initD,file.name),path.join(newD,file.name),callback);
-            }
-            else if(file.isDirectory()){
-                fs.mkdir(path.join(newD,file.name),{ recursive: true }, callback);
-                copyFiles(path.join(initD,file.name),path.join(newD,file.name));
-            }
-        }
-       
-    })
-}
-
-function copyAssets(initDir, newDir){
-    fs.mkdir(newDir, { recursive: true }, callback);
-    copyFiles(initDir,newDir );
+async function copyAssets(initDir, newDir){
+    try{
+        await fs.promises.mkdir(newDir, { recursive: true }, callback);
+        await copyDirectory(initDir,newDir);
+    }
+    catch(err){ console.log(err)}
+   
 }
 
 async function getNewComponent(el)
@@ -96,8 +65,8 @@ async function readTemplate(){
 
 function buildPage(){
     fs.mkdir(newDirPath, { recursive: true }, callback);
-    copyStyleFiles();
-    copyAssets(path.join(__dirname, 'assets'),path.join(newDirPath,'assets') );
+    copyAssets(path.join(__dirname, 'assets'),path.join(newDirPath,'assets'));
+    mergeStyles(path.join(__dirname, 'styles'),path.join(__dirname,'project-dist/style.css'))
     readTemplate();
 }
 

@@ -9,39 +9,34 @@ function callback(err) {
     if (err) throw err;
 }
 
-function copyStyleFiles(){
+async function mergeStyles(initPath, newPath){
     let styleArray=[];
-    fs.writeFile(bundlePath,'',callback)
-    fs.readdir(filePath,{withFileTypes: true}, async function(err, content)
-    {
-        callback;
-        styleArray = await copyToArray(content);
-        writeToBundle(styleArray);
-    })
-    
+    fs.writeFile(newPath,'',callback)
+    const content = await fs.promises.readdir(initPath,{withFileTypes: true});
+    styleArray = await copyToArray(content, initPath);
+    writeToBundle(styleArray, newPath); 
 }
 
-function writeToBundle(array){
+function writeToBundle(array, newPath){
     for(let i=0;i<array.length;i++){
-        fs.appendFile(bundlePath,array[i],callback);
+        fs.appendFile(newPath,array[i],callback);
     }  
 }
 
-async function copyToArray(content){
+async function copyToArray(content, initPath){
     let array=[];
     for(let file of content){
         
         if(file.isFile() && path.extname(file.name)=='.css')
         { 
-            let newData = await readContent(file.name);
+            let newData = await fs.promises.readFile(path.join(initPath, file.name),'utf8');
             array.push(newData);
         }
     }
     return array;
 }
-async function readContent(file){
-    const data = await fs.promises.readFile(path.join(filePath, file),'utf8');
-    return data;
-}
 
-copyStyleFiles();
+
+mergeStyles(filePath, bundlePath);
+
+module.exports = {mergeStyles}
