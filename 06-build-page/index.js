@@ -10,19 +10,6 @@ function callback(err) {
     if (err) throw err;
 }
 
-// function copyStyleFiles(){
-//     const filePathStyle = path.join(__dirname, 'styles');
-//     const bundlePathStyle = path.join(__dirname,'project-dist/style.css');
-//     let styleArray=[];
-//     fs.writeFile(bundlePathStyle,'',callback)
-//     fs.readdir(filePathStyle,{withFileTypes: true}, async function(err, content)
-//     {
-//         callback;
-//         styleArray = await copyToArray(content, filePathStyle);
-//         writeToFile(styleArray, bundlePathStyle);
-//     })
-    
-// }
 
 function writeToFile(array, newFilePath){
     for(let i=0;i<array.length;i++){

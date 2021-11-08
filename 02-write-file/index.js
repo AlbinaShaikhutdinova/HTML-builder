@@ -22,8 +22,9 @@ function question(q) {
 };
 
 async function main() {
+    console.log('Hello!')
     var answer="";
-    while (answer != 'exit\n' ) {
+    while (answer != 'exit\n' ) {     
         fs.appendFile(filePath, answer,function(error){
             if(error) 
                 throw error; 

@@ -20,9 +20,9 @@ async function readDir(filePath) {
         if(file.isFile()){
             showFileInfo(newPath,file);
         }
-        else if(file.isDirectory()){
-          await readDir(newPath)
-        }
+        // else if(file.isDirectory()){
+        //   await readDir(newPath)
+        // }
   }
 }
 readDir(filePath);

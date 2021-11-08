@@ -13,7 +13,7 @@ function callback(err) {
 
 async function copyDirectory(initD, newD,root = true){
     await fs.promises.mkdir(newD, { recursive: true });
-     if(root)
+    if(root)
      try{
         await cleanDirectory(newD);
      }catch(er){console.log(er)}
@@ -33,7 +33,7 @@ copyDirectory(initDir,newDir);
 
 async function cleanDirectory(dir, root = true){
     for(let file of await fs.promises.readdir(dir,{withFileTypes: true})){
-        if(file.isFile())
+        if(file.isFile() || !file.isDirectory())
         {
             fs.unlink(path.join(dir, file.name), ((err) => {
               if(err) console.log(err);}));
@@ -44,13 +44,6 @@ async function cleanDirectory(dir, root = true){
             }catch(er){console.log(er)}  
         }
     }
-    if(!root)
-    {    
-        fs.rmdir(dir, (err) => {
-            if (err) {
-                console.log(err);
-            }
-    });}
 }
 
 module.exports = {copyDirectory, cleanDirectory}
